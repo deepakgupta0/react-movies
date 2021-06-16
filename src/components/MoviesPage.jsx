@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { getMovies } from '../services/fakeMovies'
+import Pagination from './Pagination'
+import GenreList from './GenreList'
 
 export default class MoviesPage extends Component {
 
@@ -81,7 +83,7 @@ export default class MoviesPage extends Component {
     handleGenre = (genreName) => {
         this.setState({
             currentGenre: genreName,
-            number:1
+            number: 1
         });
     }
 
@@ -133,14 +135,7 @@ export default class MoviesPage extends Component {
                     {/* Movies Component */}
                     <div className="row">
                         <div className="col-3">
-                            <ul class="list-group">
-                                {
-                                    this.state.genres.map((genre) => {
-                                        return (<li class="list-group-item" key={genre._id} onClick={() => { this.handleGenre(genre.name) }}>{genre.name}</li>
-                                        );
-                                    })
-                                }
-                            </ul>
+                            <GenreList genres={this.state.genres} handleGenre={this.handleGenre}></GenreList>
                         </div>
                         <div className="col">
                             {/* INPUTS */}
@@ -187,34 +182,7 @@ export default class MoviesPage extends Component {
                                     }
                                 </tbody>
                             </table>
-
-                            {/* PAGINATOR */}
-                            <nav aria-label="...">
-                                <ul class="pagination pagination-sm">
-                                    {
-                                        pageNumberArray.map((pageNumber) => {
-                                            if (pageNumber === this.state.number) {
-                                                return (
-                                                    <li class="page-item active">
-                                                        <span class="page-link" href="#" tabIndex="-1" onClick={this.handleChangeNumber}>{pageNumber}</span>
-                                                    </li>
-                                                )
-
-                                            }
-                                            else {
-                                                return (
-                                                    <li class="page-item" key={pageNumber}>
-                                                        <span class="page-link" href="#" tabIndex="-1" onClick={this.handleChangeNumber}>{pageNumber}</span>
-                                                    </li>
-                                                )
-                                            }
-
-                                        })
-                                    }
-
-                                </ul>
-                            </nav>
-
+                            <Pagination pageNumberArray={pageNumberArray} handleChangeNumber={this.handleChangeNumber} number={this.state.number}></Pagination>
                         </div>
                     </div>
                 </div>
