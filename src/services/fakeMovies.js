@@ -70,6 +70,20 @@ const movies = [
         genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
         numberInStock: 7,
         dailyRentalRate: 3.5
+    },
+    {
+        _id: "5b21ca3eeb7f6fbccd471821",
+        title: "The Avengers",
+        genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
+        numberInStock: 7,
+        dailyRentalRate: 3.5
+    },
+    {
+        _id: "5b21ca3eeb7f6fbccd471821",
+        title: "The Avengers",
+        genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
+        numberInStock: 7,
+        dailyRentalRate: 3.5
     }
 ];
 

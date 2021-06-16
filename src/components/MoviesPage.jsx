@@ -4,11 +4,12 @@ import { getMovies } from '../services/fakeMovies'
 export default class MoviesPage extends Component {
 
     state = {
-        movies: getMovies(),
+        movies: [],
         value: "",
         limit: 4,
-        number: 1
-
+        number: 1,
+        genres: [{ _id: 1, name: "All Genres" }],
+        currentGenre: "All Genres"
     }
 
     delete = (movieObj) => {
@@ -23,7 +24,8 @@ export default class MoviesPage extends Component {
     handleChange = (e) => {
 
         this.setState({
-            value: e.target.value
+            value: e.target.value,
+            number: 1 //to avoid searching conflict with page number
         });
     }
 
@@ -76,11 +78,23 @@ export default class MoviesPage extends Component {
             movies: sortedMovies
         });
     }
+    handleGenre = (genreName) => {
+        this.setState({
+            currentGenre: genreName,
+            number:1
+        });
+    }
 
     render() {
+
         // FILTERING PURPOSE
         let newMoviesArray = this.state.movies.filter((movie) => {
-            return movie.title.toLowerCase().startsWith(this.state.value.toLowerCase());
+            if (this.state.currentGenre === "All Genres") {
+                return movie.title.toLowerCase().startsWith(this.state.value.toLowerCase());
+            }
+            else {
+                return movie.title.toLowerCase().startsWith(this.state.value.toLowerCase()) && movie.genre.name === this.state.currentGenre;
+            }
         })
 
         //PAGINATION PURPOSE
@@ -118,7 +132,16 @@ export default class MoviesPage extends Component {
                 <div className="container">
                     {/* Movies Component */}
                     <div className="row">
-                        <div className="col-3"></div>
+                        <div className="col-3">
+                            <ul class="list-group">
+                                {
+                                    this.state.genres.map((genre) => {
+                                        return (<li class="list-group-item" key={genre._id} onClick={() => { this.handleGenre(genre.name) }}>{genre.name}</li>
+                                        );
+                                    })
+                                }
+                            </ul>
+                        </div>
                         <div className="col">
                             {/* INPUTS */}
 
@@ -173,15 +196,15 @@ export default class MoviesPage extends Component {
                                             if (pageNumber === this.state.number) {
                                                 return (
                                                     <li class="page-item active">
-                                                        <span class="page-link" href="#" tabindex="-1" onClick={this.handleChangeNumber}>{pageNumber}</span>
+                                                        <span class="page-link" href="#" tabIndex="-1" onClick={this.handleChangeNumber}>{pageNumber}</span>
                                                     </li>
                                                 )
 
                                             }
                                             else {
                                                 return (
-                                                    <li class="page-item">
-                                                        <span class="page-link" href="#" tabindex="-1" onClick={this.handleChangeNumber}>{pageNumber}</span>
+                                                    <li class="page-item" key={pageNumber}>
+                                                        <span class="page-link" href="#" tabIndex="-1" onClick={this.handleChangeNumber}>{pageNumber}</span>
                                                     </li>
                                                 )
                                             }
@@ -197,5 +220,18 @@ export default class MoviesPage extends Component {
                 </div>
             </div >
         )
+    }
+
+    async componentDidMount() {
+        let moviePromise = await fetch('https://react-backend101.herokuapp.com/movies');
+        let movies = await moviePromise.json();
+
+        let genrePromise = await fetch('https://react-backend101.herokuapp.com/genres');
+        let genre = await genrePromise.json();
+
+        this.setState({
+            movies: movies.movies,
+            genres: [...this.state.genres, ...genre.genres]
+        })
     }
 }
